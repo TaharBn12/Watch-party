@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Watch Party - شاهد الفيديو مع أصدقائك في نفس اللحظة مع دردشة ومزامنة مباشرة.">
+    <title>Watch Party | مشاهدة جماعية</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body data-page="home">
+<header class="site-header">
+    <a class="brand" href="/index.html" aria-label="العودة للرئيسية">
+        <span class="brand-mark">▶</span>
+        <span>Watch Party</span>
+    </a>
+    <nav class="top-nav" aria-label="التنقل الرئيسي">
+        <a href="#create">إنشاء غرفة</a>
+        <a href="#join">انضمام</a>
+        <a href="#public-rooms">غرف عامة</a>
+    </nav>
+    <div class="auth-actions" id="authActions">
+        <a class="btn btn-ghost" href="/login.html">دخول</a>
+    </div>
+</header>
+
+<main>
+    <section class="hero section-grid">
+        <div class="hero-content card card-hero">
+            <p class="eyebrow">مشاهدة متزامنة • دردشة فورية • عربي RTL</p>
+            <h1>شاهدوا نفس الفيديو في نفس اللحظة، مهما كانت المسافة.</h1>
+            <p class="hero-text">
+                أنشئ غرفة، شارك رابط الدعوة، واستمتع بمشاهدة جماعية لفيديو YouTube أو رابط MP4 مباشر
+                مع قائمة انتظار ودردشة مباشرة.
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#create">ابدأ غرفة الآن</a>
+                <a class="btn btn-secondary" href="/login.html">تسجيل أو دخول كضيف</a>
+            </div>
+            <ul class="feature-list compact-list" aria-label="ميزات مختصرة">
+                <li>مضيف يتحكم بالصلاحيات</li>
+                <li>غرف عامة أو بكلمة سر</li>
+                <li>مزامنة فورية عبر WebSocket</li>
+            </ul>
+        </div>
+        <div class="hero-preview card">
+            <div class="mock-player">
+                <div class="mock-player-screen">
+                    <span class="play-circle">▶</span>
+                </div>
+                <div class="mock-timeline"><span></span></div>
+                <div class="mock-controls">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+            <div class="mock-chat">
+                <p><strong>ليلى:</strong> ابدأوا؟ 🍿</p>
+                <p><strong>سامي:</strong> الصوت واضح عندي.</p>
+                <p><strong>المضيف:</strong> تشغيل بعد 3 ثواني.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="create" class="section-grid section-gap">
+        <div class="card">
+            <div class="section-heading">
+                <p class="eyebrow">إنشاء غرفة</p>
+                <h2>جهّز سهرة المشاهدة</h2>
+                <p>تحتاج تسجيل دخول أو دخول كضيف عبر Supabase حتى يتم حفظ الغرفة وربطك كمضيف.</p>
+            </div>
+            <form id="createRoomForm" class="form-stack" autocomplete="off">
+                <label>
+                    <span>اسم الغرفة</span>
+                    <input name="name" type="text" minlength="3" maxlength="100" required placeholder="مثال: سهرة الأنمي">
+                </label>
+                <label>
+                    <span>رابط فيديو أولي اختياري</span>
+                    <input name="initialVideoUrl" type="url" maxlength="2048" placeholder="YouTube أو MP4 مباشر">
+                </label>
+                <div class="form-row">
+                    <label>
+                        <span>نوع الغرفة</span>
+                        <select name="publicRoom">
+                            <option value="true">عامة</option>
+                            <option value="false">خاصة</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>من يتحكم بالتشغيل؟</span>
+                        <select name="controlMode">
+                            <option value="HOST_ONLY">المضيف فقط</option>
+                            <option value="MEMBERS_WITH_PERMISSION">أعضاء بإذن</option>
+                            <option value="EVERYONE">الجميع</option>
+                        </select>
+                    </label>
+                </div>
+                <label>
+                    <span>كلمة سر اختيارية</span>
+                    <input name="password" type="password" maxlength="128" placeholder="اتركها فارغة إن لم تحتجها">
+                </label>
+                <button class="btn btn-primary btn-block" type="submit">إنشاء الغرفة</button>
+            </form>
+        </div>
+
+        <div id="join" class="card">
+            <div class="section-heading">
+                <p class="eyebrow">انضمام سريع</p>
+                <h2>لديك رابط دعوة؟</h2>
+                <p>الصق الرابط الكامل أو كود الدعوة فقط، وسنأخذك مباشرة للغرفة.</p>
+            </div>
+            <form id="joinRoomForm" class="form-stack" autocomplete="off">
+                <label>
+                    <span>الرابط أو كود الدعوة</span>
+                    <input name="invite" type="text" required placeholder="AbCdEf1234 أو رابط الغرفة">
+                </label>
+                <button class="btn btn-secondary btn-block" type="submit">فتح الغرفة</button>
+            </form>
+            <div id="invitePreview" class="preview-box hidden" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <section id="public-rooms" class="section-gap">
+        <div class="section-heading center">
+            <p class="eyebrow">اكتشاف</p>
+            <h2>غرف عامة حديثة</h2>
+            <p>تظهر هنا آخر الغرف العامة المفتوحة.</p>
+        </div>
+        <div id="publicRoomsList" class="cards-list" aria-live="polite"></div>
+    </section>
+</main>
+
+<div id="toastRoot" class="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+<footer class="site-footer">
+    <p>Watch Party — مبني بـ Spring Boot و Supabase و WebSocket.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/ui.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/index.js"></script>
+</body>
+</html>
