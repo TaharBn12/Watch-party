@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="غرفة مشاهدة جماعية في Watch Party.">
+    <title>غرفة المشاهدة | Watch Party</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body data-page="room">
+<header class="site-header room-header">
+    <a class="brand" href="/index.html">
+        <span class="brand-mark">▶</span>
+        <span>Watch Party</span>
+    </a>
+    <div class="room-header-info">
+        <strong id="roomTitle">جارٍ تحميل الغرفة...</strong>
+        <span id="connectionState" class="connection-pill muted">غير متصل</span>
+    </div>
+    <div class="auth-actions">
+        <button id="copyInviteButton" class="btn btn-ghost" type="button">نسخ الدعوة</button>
+        <button id="signOutButton" class="btn btn-danger-soft" type="button">خروج</button>
+    </div>
+</header>
+
+<main class="room-layout">
+    <section id="joinGate" class="card join-gate hidden">
+        <div class="section-heading center">
+            <p class="eyebrow">دعوة غرفة</p>
+            <h1 id="joinGateTitle">الانضمام للغرفة</h1>
+            <p id="joinGateText">أدخل كلمة السر إن كانت الغرفة محمية.</p>
+        </div>
+        <form id="joinRoomGateForm" class="form-stack">
+            <label>
+                <span>كلمة السر</span>
+                <input name="password" type="password" maxlength="128" placeholder="اتركها فارغة إذا لم توجد كلمة سر">
+            </label>
+            <button class="btn btn-primary btn-block" type="submit">انضمام</button>
+        </form>
+    </section>
+
+    <section id="roomContent" class="room-content hidden">
+        <section class="watch-panel card">
+            <div class="video-shell" id="videoShell">
+                <div id="emptyVideoState" class="empty-video">
+                    <span class="play-circle">▶</span>
+                    <h2>لا يوجد فيديو بعد</h2>
+                    <p>أضف رابط YouTube أو MP4 من قائمة الانتظار أو زر تغيير الفيديو.</p>
+                </div>
+                <div id="youtubePlayer" class="youtube-player hidden"></div>
+                <video id="mp4Player" class="mp4-player hidden" controls playsinline preload="metadata"></video>
+            </div>
+
+            <div class="player-toolbar">
+                <button id="playButton" class="btn btn-primary" type="button">تشغيل</button>
+                <button id="pauseButton" class="btn btn-secondary" type="button">إيقاف</button>
+                <label class="seek-label">
+                    <span>الموضع بالثواني</span>
+                    <input id="seekInput" type="number" min="0" step="0.1" value="0">
+                </label>
+                <button id="seekButton" class="btn btn-ghost" type="button">انتقال</button>
+            </div>
+
+            <form id="changeVideoForm" class="inline-form">
+                <input name="videoUrl" type="url" maxlength="2048" placeholder="رابط YouTube أو MP4 مباشر" required>
+                <button class="btn btn-secondary" type="submit">تغيير الفيديو</button>
+            </form>
+        </section>
+
+        <aside class="side-panel">
+            <section class="card collapsible-card">
+                <div class="panel-heading">
+                    <h2>المشاهدون</h2>
+                    <span id="membersCount" class="badge">0</span>
+                </div>
+                <ul id="membersList" class="members-list" aria-live="polite"></ul>
+            </section>
+
+            <section class="card collapsible-card">
+                <div class="panel-heading">
+                    <h2>الدردشة</h2>
+                    <span class="badge">آخر 50</span>
+                </div>
+                <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+                <form id="chatForm" class="chat-form">
+                    <input name="content" type="text" maxlength="1000" placeholder="اكتب رسالة..." autocomplete="off" required>
+                    <button class="btn btn-primary" type="submit">إرسال</button>
+                </form>
+                <div class="emoji-row" aria-label="إيموجي سريع">
+                    <button type="button" data-emoji="😂">😂</button>
+                    <button type="button" data-emoji="😍">😍</button>
+                    <button type="button" data-emoji="👏">👏</button>
+                    <button type="button" data-emoji="🍿">🍿</button>
+                    <button type="button" data-emoji="🔥">🔥</button>
+                </div>
+            </section>
+        </aside>
+
+        <section class="playlist-panel card">
+            <div class="panel-heading">
+                <h2>قائمة الانتظار</h2>
+                <button id="playNextButton" class="btn btn-ghost" type="button">تشغيل التالي</button>
+            </div>
+            <form id="playlistForm" class="inline-form">
+                <input name="url" type="url" maxlength="2048" placeholder="رابط YouTube أو MP4" required>
+                <input name="title" type="text" maxlength="200" placeholder="عنوان اختياري">
+                <button class="btn btn-secondary" type="submit">إضافة</button>
+            </form>
+            <ol id="playlistItems" class="playlist-list" aria-live="polite"></ol>
+        </section>
+
+        <section class="call-panel card">
+            <div class="panel-heading">
+                <h2>المكالمة</h2>
+                <span class="badge muted">WebRTC Mesh حتى 6 أشخاص</span>
+            </div>
+            <div class="call-grid" id="callGrid">
+                <div class="call-tile muted-tile" id="callEmptyState">
+                    <span>🎙️</span>
+                    <p>اضغط “بدء المكالمة” للتحدث مع الموجودين في الغرفة.</p>
+                </div>
+            </div>
+            <div class="call-actions">
+                <button id="startCallButton" class="btn btn-secondary" type="button">بدء المكالمة</button>
+                <button id="leaveCallButton" class="btn btn-danger-soft" type="button" disabled>مغادرة المكالمة</button>
+                <button id="micButton" class="btn btn-ghost" type="button" disabled>كتم الميكروفون</button>
+                <button id="cameraButton" class="btn btn-ghost" type="button" disabled>إيقاف الكاميرا</button>
+            </div>
+        </section>
+    </section>
+</main>
+
+<div id="toastRoot" class="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/ui.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/video-player.js"></script>
+<script src="/assets/js/sync.js"></script>
+<script src="/assets/js/webrtc.js"></script>
+<script src="/assets/js/room.js"></script>
+</body>
+</html>
